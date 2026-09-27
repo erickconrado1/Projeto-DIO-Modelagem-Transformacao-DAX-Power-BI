@@ -1,0 +1,28 @@
+-- DIO - Modelagem e transformação de dados com DAX com Power BI
+
+D_Calendário =
+CALENDAR(
+    MIN(Financials_origem[Date]),
+    MAX(Financials_origem[Date])
+)
+
+Ano = YEAR(D_Calendário[Date])
+Mês Nº = MONTH(D_Calendário[Date])
+Mês = FORMAT(D_Calendário[Date], "MMMM")
+
+-- Alternativa DAX para a dimensão de produtos, se necessário:
+D_Produtos =
+ADDCOLUMNS(
+    SUMMARIZE(Financials_origem, Financials_origem[Product]),
+    "ID_Produto", SWITCH([Product], "Carretera",0, "Montana",1, "Paseo",2, "Velo",3, "VTT",4, "Amarilla",5),
+    "Contagem", CALCULATE(COUNTROWS(Financials_origem)),
+    "Média de Unidades Vendidas", CALCULATE(AVERAGE(Financials_origem[Units Sold])),
+    "Média de manufatura", CALCULATE(AVERAGE(Financials_origem[Manufacturing Price])),
+    "Média do valor de vendas", CALCULATE(AVERAGE(Financials_origem[Sale Price])),
+    "Mediana do valor de vendas", CALCULATE(MEDIAN(Financials_origem[Sale Price])),
+    "Valor máximo de venda", CALCULATE(MAX(Financials_origem[Sale Price])),
+    "Valor mínimo de venda", CALCULATE(MIN(Financials_origem[Sale Price]))
+)
+
+-- Observação: a aula demonstra a maior parte das transformações no Power Query;
+-- as fórmulas acima complementam a entrega com DAX.
